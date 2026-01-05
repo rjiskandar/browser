@@ -16,6 +16,7 @@ contextBridge.exposeInMainWorld('lumen', {
   },
   rpc: {
     getHeight: () => ipcRenderer.invoke('rpc:getHeight'),
+    getBalance: (address) => ipcRenderer.invoke('rpc:getBalance', address),
     onHeightChanged: (callback) => {
       if (typeof callback !== 'function') return () => {};
       const handler = (_event, payload) => {
@@ -30,5 +31,17 @@ contextBridge.exposeInMainWorld('lumen', {
         ipcRenderer.removeListener('rpc:heightChanged', handler);
       };
     }
+  },
+  wallet: {
+    create: (password) => ipcRenderer.invoke('wallet:create', password),
+    import: (data) => ipcRenderer.invoke('wallet:import', data),
+    list: () => ipcRenderer.invoke('wallet:list'),
+    reveal: (data) => ipcRenderer.invoke('wallet:reveal', data),
+    rename: (data) => ipcRenderer.invoke('wallet:rename', data),
+    delete: (data) => ipcRenderer.invoke('wallet:delete', data),
+    exportPqc: (data) => ipcRenderer.invoke('wallet:exportPqc', data)
+  },
+  tx: {
+    send: (data) => ipcRenderer.invoke('tx:send', data)
   }
 });

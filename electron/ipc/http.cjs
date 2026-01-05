@@ -18,11 +18,19 @@ async function httpGet(url, options = {}) {
         ? options.timeout
         : 10000;
     const t = setTimeout(() => controller.abort(), timeoutMs);
-    const res = await fetch(url, {
-      method: 'GET',
+    
+    const fetchOptions = {
+      method: options.method || 'GET',
       headers: options.headers || {},
       signal: controller.signal
-    });
+    };
+    
+    // Add body for POST/PUT requests
+    if (options.body && (options.method === 'POST' || options.method === 'PUT')) {
+      fetchOptions.body = options.body;
+    }
+    
+    const res = await fetch(url, fetchOptions);
     clearTimeout(t);
 
     const contentType = res.headers.get('content-type') || '';
